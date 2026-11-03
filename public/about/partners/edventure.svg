@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="180" viewBox="0 0 360 180">
+  <rect width="360" height="180" rx="16" fill="#0b0f1a"/>
+  <polygon points="46,110 112,50 130,50 86,110" fill="#60a5fa"/>
+  <polygon points="124,110 152,50 176,50 152,110" fill="#84cc16"/>
+  <polygon points="160,110 198,50 208,50 238,110" fill="#22d3ee"/>
+  <text x="44" y="148" font-size="52" font-family="Arial, sans-serif" font-weight="800" fill="#ffffff">EdVENTURE</text>
+  <text x="264" y="170" font-size="30" font-family="Arial, sans-serif" font-weight="700" fill="#ffffff">PARK</text>
+</svg>

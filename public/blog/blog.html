@@ -1,0 +1,1184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog | SDC SNIST</title>
+    <meta
+      name="description"
+      content="Read the latest articles, stories, and insights from the Student Developers Community (SDC) at SNIST."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../about/style.css" />
+    <style>
+      /* =========================================
+           BLOG PAGE STYLES
+        ========================================= */
+      .featured-section {
+        padding: 140px 0 60px;
+        position: relative;
+      }
+
+      .featured-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #f97316;
+        margin-bottom: 1rem;
+      }
+
+      .featured-card {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 3rem;
+        align-items: center;
+        border-radius: 24px;
+        overflow: hidden;
+        padding: 3rem;
+        background: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.07);
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+        transition: box-shadow 0.3s ease;
+        cursor: pointer;
+      }
+
+      .featured-card:hover {
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+      }
+
+      .featured-image {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 5rem;
+        color: white;
+        font-weight: 900;
+      }
+
+      .featured-body {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .post-category {
+        display: inline-block;
+        padding: 0.3rem 1rem;
+        border-radius: 100px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        width: fit-content;
+      }
+
+      .cat-article {
+        background: rgba(249, 115, 22, 0.12);
+        color: #f97316;
+      }
+      .cat-event {
+        background: rgba(59, 130, 246, 0.12);
+        color: #3b82f6;
+      }
+      .cat-growth {
+        background: rgba(16, 185, 129, 0.12);
+        color: #10b981;
+      }
+      .cat-community {
+        background: rgba(217, 70, 239, 0.12);
+        color: #d946ef;
+      }
+      .cat-digital {
+        background: rgba(99, 102, 241, 0.12);
+        color: #6366f1;
+      }
+
+      .featured-body h2 {
+        font-size: 2rem;
+        font-weight: 800;
+        line-height: 1.2;
+        color: #0f172a;
+        margin: 0;
+      }
+
+      .featured-body > p {
+        font-size: 1.05rem;
+        line-height: 1.7;
+        color: #475569;
+        margin: 0;
+        /* 3-line clamp to keep featured card consistent */
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .post-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 0.875rem;
+        color: #64748b;
+      }
+
+      .post-meta span {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+      }
+
+      .read-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #f97316;
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        transition:
+          gap 0.2s ease,
+          color 0.2s ease;
+        font-family: inherit;
+      }
+
+      .read-btn:hover {
+        gap: 0.85rem;
+        color: #d946ef;
+      }
+
+      /* --- Articles Grid --- */
+      .articles-section {
+        padding: 40px 0 100px;
+      }
+
+      .articles-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .filter-btn {
+        padding: 0.4rem 1rem;
+        font-size: 0.85rem;
+        border: 1.5px solid rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        background: transparent;
+        cursor: pointer;
+        color: #475569;
+        font-family: inherit;
+        font-weight: 600;
+        transition: all 0.2s;
+      }
+
+      .filter-btn:hover {
+        border-color: rgba(249, 115, 22, 0.4);
+        color: #f97316;
+      }
+
+      .filter-btn.active {
+        background: #f8fafc;
+        color: #111827;
+        border-color: #d1d5db;
+      }
+
+      .articles-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+      }
+
+      .article-card {
+        display: flex;
+        flex-direction: column;
+        border-radius: 16px;
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.07);
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+        cursor: pointer;
+      }
+
+      .article-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
+      }
+      .article-img {
+        width: 100%;
+        height: 180px;
+        overflow: hidden;
+        background: #e2e8f0;
+      }
+
+      .article-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .bg-1 {
+        background: linear-gradient(135deg, #f97316, #d946ef);
+      }
+      .bg-2 {
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      }
+      .bg-3 {
+        background: linear-gradient(135deg, #10b981, #3b82f6);
+      }
+      .bg-4 {
+        background: linear-gradient(135deg, #f59e0b, #ef4444);
+      }
+      .bg-5 {
+        background: linear-gradient(135deg, #6366f1, #ec4899);
+      }
+
+      .article-body {
+        padding: 1.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+        flex-grow: 1;
+      }
+
+      .article-body h3 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        line-height: 1.35;
+        color: #0f172a;
+        margin: 0;
+      }
+
+      .article-body > p {
+        font-size: 0.9rem;
+        line-height: 1.6;
+        color: #475569;
+        margin: 0;
+        flex-grow: 1;
+        /* 3-line clamp keeps grid uniform */
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .article-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 0.75rem;
+      }
+
+      .article-date {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        font-weight: 600;
+      }
+
+      /* --- Newsletter --- */
+      .newsletter {
+        border-radius: 24px;
+        padding: 3.5rem;
+        text-align: center;
+        background: linear-gradient(
+          135deg,
+          rgba(249, 115, 22, 0.08),
+          rgba(217, 70, 239, 0.08)
+        );
+        border: 1px solid rgba(249, 115, 22, 0.2);
+        margin-bottom: 80px;
+      }
+
+      .newsletter h2 {
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 0.75rem;
+      }
+      .newsletter p {
+        color: #475569;
+        margin-bottom: 1.75rem;
+        font-size: 1.05rem;
+      }
+
+      .newsletter-form {
+        display: flex;
+        gap: 0.75rem;
+        max-width: 420px;
+        margin: 0 auto;
+      }
+
+      .newsletter-input {
+        flex-grow: 1;
+        padding: 0.75rem 1.25rem;
+        border-radius: 10px;
+        border: 1.5px solid rgba(0, 0, 0, 0.1);
+        font-family: "Inter", sans-serif;
+        font-size: 0.95rem;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+
+      .newsletter-input:focus {
+        border-color: #f97316;
+      }
+
+      /* =========================================
+           MODAL STYLES
+        ========================================= */
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        z-index: 1000;
+        display: flex;
+        align-items: flex-end; /* slide up from bottom */
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.35s ease;
+      }
+
+      .modal-backdrop.open {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      .modal-panel {
+        background: #ffffff;
+        width: 100%;
+        max-width: 740px;
+        max-height: 90vh;
+        border-radius: 24px 24px 0 0;
+        overflow-y: auto;
+        transform: translateY(60px);
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        scrollbar-width: thin;
+        scrollbar-color: #e2e8f0 transparent;
+      }
+
+      .modal-backdrop.open .modal-panel {
+        transform: translateY(0);
+      }
+
+      .modal-cover {
+        width: 100%;
+        height: 220px;
+        position: relative;
+        overflow: hidden;
+        background: #0f172a;
+      }
+
+      .modal-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .modal-close {
+        position: absolute;
+        top: 1.25rem;
+        right: 1.25rem;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.25);
+        border: none;
+        color: white;
+        font-size: 1.25rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(4px);
+        transition: background 0.2s;
+      }
+
+      .modal-close:hover {
+        background: rgba(255, 255, 255, 0.4);
+      }
+
+      .modal-body {
+        padding: 2.5rem;
+      }
+
+      .modal-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 0.85rem;
+        color: #64748b;
+        margin-bottom: 1.25rem;
+      }
+
+      .modal-body h2 {
+        font-size: 1.75rem;
+        font-weight: 800;
+        line-height: 1.25;
+        color: #0f172a;
+        margin: 0 0 1.25rem;
+      }
+
+      .modal-content p {
+        font-size: 1rem;
+        line-height: 1.8;
+        color: #374151;
+        margin-bottom: 1rem;
+      }
+
+      .modal-content h3 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 1.75rem 0 0.5rem;
+      }
+
+      .modal-content ul {
+        padding-left: 1.25rem;
+        color: #374151;
+        line-height: 1.8;
+        font-size: 1rem;
+      }
+
+      .modal-content blockquote {
+        border-left: 4px solid #f97316;
+        margin: 1.5rem 0;
+        padding: 0.75rem 1.25rem;
+        background: rgba(249, 115, 22, 0.06);
+        border-radius: 0 8px 8px 0;
+        font-style: italic;
+        color: #475569;
+      }
+
+      .modal-divider {
+        border: none;
+        border-top: 1px solid #e2e8f0;
+        margin: 2rem 0;
+      }
+
+      @media (max-width: 1024px) {
+        .articles-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .featured-card {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .articles-grid {
+          grid-template-columns: 1fr;
+        }
+        .modal-panel {
+          max-height: 95vh;
+        }
+        .newsletter {
+          padding: 2rem 1.25rem;
+        }
+        .newsletter-form {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="interactive-bg" aria-hidden="true">
+      <div class="bg-orb bg-orb-a" data-depth="0.08"></div>
+      <div class="bg-orb bg-orb-b" data-depth="0.12"></div>
+      <div class="bg-grid bg-grid-top" data-depth="0.05"></div>
+      <div class="bg-grid bg-grid-bottom" data-depth="0.07"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="container">
+        <a
+          href="/"
+          class="logo"
+          style="display: flex; align-items: center; gap: 8px; text-decoration: none"
+        >
+          <svg
+            width="40"
+            height="40"
+            viewBox="0 0 100 100"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            style="border: 1px solid #e2e8f0; border-radius: 8px"
+          >
+            <rect width="100" height="100" rx="20" fill="#ffffff" />
+            <text
+              x="50"
+              y="55"
+              font-family="sans-serif"
+              font-weight="800"
+              font-size="36"
+              text-anchor="middle"
+              dominant-baseline="middle"
+              fill="url(#grad1)"
+            >
+              SDC
+            </text>
+            <defs>
+              <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop
+                  offset="0%"
+                  style="stop-color: #f97316; stop-opacity: 1"
+                />
+                <stop
+                  offset="100%"
+                  style="stop-color: #d946ef; stop-opacity: 1"
+                />
+              </linearGradient>
+            </defs>
+          </svg>
+          <span>SDC SNIST</span>
+        </a>
+        <button
+          class="menu-toggle"
+          type="button"
+          aria-label="Toggle navigation"
+          aria-expanded="false"
+          aria-controls="site-nav-links"
+        >
+          <span class="menu-icon" aria-hidden="true"></span>
+        </button>
+        <ul class="nav-links" id="site-nav-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/about/about.html">About</a></li>
+          <li><a href="/events">Events</a></li>
+          <li><a href="/community">Community</a></li>
+          <li><a href="/blog/blog.html" class="active text-gradient">Blog</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+        <a href="/join" class="btn btn-primary nav-btn">Join Us</a>
+      </div>
+    </nav>
+
+    <main>
+      <!-- ===== FEATURED ARTICLE ===== -->
+      <section class="featured-section">
+        <div class="background-glow"></div>
+        <div class="container">
+          <p class="featured-label">&#9679; Featured Article</p>
+          <div class="featured-card light-card" onclick="openModal('post-1')">
+            <div
+              class="featured-image"
+              style="
+                background-color: #f8fafc;
+                background-image: url('assets/SDC%20INDIA%20LOGO.jpg.jpeg');
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: cover;
+                border-radius: 16px;
+              "
+              aria-label="SDC SNIST Logo"
+            ></div>
+            <div class="featured-body">
+              <span class="post-category cat-article">Article</span>
+              <h2>The Story Behind SDC: A Community Built for Builders</h2>
+              <p>
+                The Student Developers Community (SDC) was established in 2022
+                at Sreenidhi Institute of Science and Technology. Its aim — to
+                create a space where students grow technically through
+                collaboration and hands-on learning, moving beyond the classroom
+                into real-world technology.
+              </p>
+              <div class="post-meta">
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <rect
+                      x="3"
+                      y="4"
+                      width="18"
+                      height="18"
+                      rx="2"
+                      ry="2"
+                    ></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                  March 2026
+                </span>
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  5 min read
+                </span>
+              </div>
+              <button
+                class="read-btn"
+                onclick="
+                  event.stopPropagation();
+                  openModal('post-1');
+                "
+              >
+                Read Article
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== ALL ARTICLES ===== -->
+      <section class="articles-section">
+        <div class="container">
+          <div class="articles-header">
+            <h2 class="section-title" style="margin: 0">All Articles</h2>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap">
+              <button class="filter-btn active" type="button" data-filter="all">
+                All
+              </button>
+              <button class="filter-btn" type="button" data-filter="event">
+                Events
+              </button>
+              <button class="filter-btn" type="button" data-filter="growth">
+                Growth
+              </button>
+              <button class="filter-btn" type="button" data-filter="community">
+                Community
+              </button>
+            </div>
+          </div>
+
+          <div class="articles-grid">
+            <article
+              class="article-card"
+              data-category="community"
+              onclick="openModal('post-2')"
+            >
+              <div class="article-img">
+                <img
+                  src="assets/WhatsApp%20Image%202026-03-16%20at%2010.03.51%20AM.jpeg"
+                  alt="Founder and Vision Behind SDC"
+                />
+              </div>
+              <div class="article-body">
+                <span class="post-category cat-community">Community</span>
+                <h3>Founder and Vision Behind SDC</h3>
+                <p>
+                  Chandrashekhar M, SNIST alumnus (2021–24), built SDC to bridge
+                  the gap between academic curriculum and industry expectations
+                  — fostering a culture of open learning and mentorship.
+                </p>
+                <div class="article-footer">
+                  <span class="article-date">Feb 2026 · 4 min read</span>
+                  <button
+                    class="read-btn"
+                    style="font-size: 0.85rem"
+                    onclick="
+                      event.stopPropagation();
+                      openModal('post-2');
+                    "
+                  >
+                    Read →
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article
+              class="article-card"
+              data-category="event"
+              onclick="openModal('post-3')"
+            >
+              <div class="article-img">
+                <img src="assets/event.jpeg" alt="Major Events and Hackathons" />
+              </div>
+              <div class="article-body">
+                <span class="post-category cat-event">Event</span>
+                <h3>Major Events & Hackathons That Defined SDC</h3>
+                <p>
+                  From the SDC Summer Tech Camp and AI Day at Growth Hub to
+                  flagship hackathons Hash It Out and UX-Plosion — here's how
+                  SDC's events became launchpads for careers.
+                </p>
+                <div class="article-footer">
+                  <span class="article-date">Dec 2025 · 6 min read</span>
+                  <button
+                    class="read-btn"
+                    style="font-size: 0.85rem"
+                    onclick="
+                      event.stopPropagation();
+                      openModal('post-3');
+                    "
+                  >
+                    Read →
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article
+              class="article-card"
+              data-category="growth"
+              onclick="openModal('post-4')"
+            >
+              <div class="article-img">
+                <img src="assets/snist.jpeg" alt="From Campus Club to SDC SNIST" />
+              </div>
+              <div class="article-body">
+                <span class="post-category cat-growth">Growth</span>
+                <h3>From Campus Club to SDC SNIST</h3>
+                <p>
+                  Once a local initiative at SNIST, SDC has grown into the
+                  flagship student developer community on campus. With SDC SPEC
+                  and new collaborations, the mission to build SNIST's strongest
+                  student developer network is underway.
+                </p>
+                <div class="article-footer">
+                  <span class="article-date">Oct 2025 · 3 min read</span>
+                  <button
+                    class="read-btn"
+                    style="font-size: 0.85rem"
+                    onclick="
+                      event.stopPropagation();
+                      openModal('post-4');
+                    "
+                  >
+                    Read →
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article
+              class="article-card"
+              data-category="digital"
+              onclick="openModal('post-5')"
+            >
+              <div class="article-img">
+                <img
+                  src="assets/WhatsApp%20Image%202026-03-16%20at%2010.03.55%20AM.jpeg"
+                  alt="SDC digital presence"
+                />
+              </div>
+              <div class="article-body">
+                <span class="post-category cat-digital">Digital</span>
+                <h3>
+                  SDC's Digital Presence: Where the Community Lives Online
+                </h3>
+                <p>
+                  From open-source repos on GitHub to communities on Instagram
+                  and LinkedIn — explore how SDC's digital platforms connect
+                  2500+ members nationwide.
+                </p>
+                <div class="article-footer">
+                  <span class="article-date">Aug 2025 · 3 min read</span>
+                  <button
+                    class="read-btn"
+                    style="font-size: 0.85rem"
+                    onclick="
+                      event.stopPropagation();
+                      openModal('post-5');
+                    "
+                  >
+                    Read →
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article
+              class="article-card"
+              data-category="article"
+              onclick="openModal('post-6')"
+            >
+              <div class="article-img">
+                <img
+                  src="assets/WhatsApp%20Image%202026-03-16%20at%2010.03.54%20AM.jpeg"
+                  alt="Why Being an SDC Member Changes Everything"
+                />
+              </div>
+              <div class="article-body">
+                <span class="post-category cat-article">Article</span>
+                <h3>Why Being an SDC Member Changes Everything</h3>
+                <p>
+                  Hands-on workshops, industry mentors, national-level event
+                  partnerships, and a community that celebrates every win.
+                  Here's why joining SDC is an investment in your future.
+                </p>
+                <div class="article-footer">
+                  <span class="article-date">Jun 2025 · 5 min read</span>
+                  <button
+                    class="read-btn"
+                    style="font-size: 0.85rem"
+                    onclick="
+                      event.stopPropagation();
+                      openModal('post-6');
+                    "
+                  >
+                    Read →
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article
+              class="article-card"
+              data-category="event"
+              onclick="openModal('post-7')"
+            >
+              <div class="article-img">
+                <img
+                  src="assets/WhatsApp%20Image%202026-03-16%20at%2010.03.55%20AM.jpeg"
+                  alt="Beyond Tech at Microsoft Hyderabad"
+                />
+              </div>
+              <div class="article-body">
+                <span class="post-category cat-event">Event</span>
+                <h3>Beyond Tech at Microsoft Hyderabad: A Recap</h3>
+                <p>
+                  SDC co-hosted Beyond Tech and AI Workshop sessions at
+                  Microsoft, connecting students with industry luminaries and
+                  startup founders in a real-world setting.
+                </p>
+                <div class="article-footer">
+                  <span class="article-date">Apr 2025 · 4 min read</span>
+                  <button
+                    class="read-btn"
+                    style="font-size: 0.85rem"
+                    onclick="
+                      event.stopPropagation();
+                      openModal('post-7');
+                    "
+                  >
+                    Read →
+                  </button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== NEWSLETTER ===== -->
+      <div class="container">
+        <div class="newsletter">
+          <h2>Stay in the <span class="text-gradient">loop</span></h2>
+          <p>
+            Get the latest articles, event announcements, and community
+            highlights delivered to your inbox.
+          </p>
+          <div class="newsletter-form">
+            <input
+              class="newsletter-input"
+              type="email"
+              placeholder="your@email.com"
+              aria-label="Email address"
+            />
+            <a href="#" class="btn btn-primary">Subscribe</a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="container footer-content">
+        <div class="logo">SDC SNIST</div>
+        <p>&copy; 2026 SDC SNIST. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <!-- =========================================
+         MODALS — Add as much content as you want here.
+         The panel scrolls internally; the page never overflows.
+    ========================================= -->
+    <div class="modal-backdrop" id="modal-backdrop" onclick="closeModal(event)">
+      <div class="modal-panel" id="modal-panel">
+        <div class="modal-cover" id="modal-cover"></div>
+        <div class="modal-body">
+          <div class="modal-meta" id="modal-meta"></div>
+          <h2 id="modal-title"></h2>
+          <div class="modal-content" id="modal-content"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../about/script.js"></script>
+    <script>
+      /* =========================================
+           BLOG POST DATA
+           To add / edit content, just update the
+           `posts` object below.
+        ========================================= */
+      const posts = {
+        "post-1": {
+          title: "The Story Behind SDC: A Community Built for Builders",
+          category: "Article",
+          catClass: "cat-article",
+          date: "March 2026",
+          readTime: "5 min read",
+          coverImage: "assets/SDC%20INDIA%20LOGO.jpg.jpeg",
+          content: `
+                    <p>The <strong>Student Developers Community (SDC)</strong> was established in the year 2022 at Sreenidhi Institute of Science and Technology (SNIST) with the aim of creating a space where students could grow technically through collaboration and hands-on learning.</p>
+                    <p>Its main aim is to help students move beyond classroom learning through real-world exposure and practical experience in technology. From the beginning, SDC focused on creating an open environment where students could explore new technologies, collaborate with peers, and gain experience through workshops, bootcamps, and hackathons.</p>
+                    <blockquote>"Learning by doing — that's the SDC way."</blockquote>
+                    <h3>Where We Are Today</h3>
+                    <p>Today, SDC stands as a strong technical community at SNIST, uniting over <strong>2500 community members</strong> who are passionate about technology, learning, and collaboration — with a thriving presence as <strong>SDC SNIST</strong>.</p>
+                    <h3>Our Core Values</h3>
+                    <ul>
+                        <li>Open and inclusive learning environment</li>
+                        <li>Real-world, hands-on exposure</li>
+                        <li>Peer collaboration over competition</li>
+                        <li>Industry-aligned skill building</li>
+                    </ul>
+                `,
+        },
+        "post-2": {
+          title: "Founder and Vision Behind SDC",
+          category: "Community",
+          catClass: "cat-community",
+          date: "February 2026",
+          readTime: "4 min read",
+          coverImage:
+            "assets/WhatsApp%20Image%202026-03-16%20at%2010.03.51%20AM.jpeg",
+          content: `
+                    <p>SDC was founded by <strong>Mr. Chandrashekhar M</strong>, a proud SNIST alumnus from the 2021–2024 batch, whose vision played a crucial role in shaping the community.</p>
+                    <p>Having experienced the gap between academic curriculum and industry expectations as a student, he aimed to create opportunities that would help learners gain real-world skills early in their journey. His focus was on building an <strong>inclusive and supportive environment</strong> where students could learn, collaborate, and gain confidence in their abilities.</p>
+                    <h3>Growth Under His Leadership</h3>
+                    <p>Under his leadership, SDC grew constantly by:</p>
+                    <ul>
+                        <li>Hosting impactful events</li>
+                        <li>Collaborating with industry professionals</li>
+                        <li>Forming partnerships with national communities and organizations</li>
+                        <li>Expanding to a network of over 2500+ members</li>
+                    </ul>
+                    <blockquote>The values and intent with which SDC was founded continue to guide the community's mission and growth even today.</blockquote>
+                `,
+        },
+        "post-3": {
+          title: "Major Events & Hackathons That Defined SDC",
+          category: "Event",
+          catClass: "cat-event",
+          date: "December 2025",
+          readTime: "6 min read",
+          coverImage: "assets/event.jpeg",
+          content: `
+                    <p>At SDC, learning is driven by action, collaboration, and real-world impact through a wide range of officially organized events.</p>
+                    <h3>Key Initiatives</h3>
+                    <ul>
+                        <li>SDC Summer Tech Camp</li>
+                        <li>UI/UX Workshop</li>
+                        <li>Python for Data Science</li>
+                        <li>Backend Development Bootcamp</li>
+                        <li>AI Workshop &amp; Data Science and AI Workshop at Microsoft</li>
+                        <li>Beyond Tech at Microsoft Hyderabad</li>
+                        <li>AI Day at Growth Hub</li>
+                        <li>AI Summit 2025</li>
+                        <li>Aleph Zero Blockchain Workshop</li>
+                        <li>Smart India Hackathon Guidance Sessions</li>
+                    </ul>
+                    <h3>Flagship Hackathons</h3>
+                    <p>A major highlight of SDC is its strong hackathon culture, led by flagship events such as <strong>Hash It Out Season 1 &amp; 2</strong> and the <strong>UX-Plosion Hackathon</strong>, where students worked on real-world problem statements, received mentorship from industry experts, built deployable solutions, and in many cases converted their participation into internships and career opportunities.</p>
+                    <h3>Community Partnerships</h3>
+                    <p>In addition to organizing its own events, SDC has made a strong mark as a community partner for national events including PyCon India, Hack This Fall, Hack 4 Hire, Social Media Summit, Techknowthon, and GDSC WOW.</p>
+                `,
+        },
+        "post-4": {
+          title: "From Campus Club to SDC SNIST",
+          category: "Growth",
+          catClass: "cat-growth",
+          date: "October 2025",
+          readTime: "3 min read",
+          coverImage: "assets/snist.jpeg",
+          content: `
+                    <p>As SDC continued to grow, it strengthened its roots at SNIST as <strong>SDC SNIST</strong>, deepening its impact across programs and student groups on campus.</p>
+                    <p>Today, SDC stands as one of the leading technical communities at SNIST and is driven by a clear mission to build a <strong>thriving student developer network</strong> at Sreenidhi.</p>
+                    <h3>Collaborations</h3>
+                    <p>Partnerships with communities such as <strong>SDC SPEC</strong> continue to strengthen SDC's innovation-driven ecosystem on and beyond campus.</p>
+                    <blockquote>The growth of SDC reflects its strong foundation, consistent efforts, and commitment to creating meaningful learning opportunities for students at SNIST.</blockquote>
+                    <h3>What's Next</h3>
+                    <p>The vision for SDC SNIST is to unite student developers at Sreenidhi and beyond, creating one of the most impactful campus tech communities.</p>
+                `,
+        },
+        "post-5": {
+          title: "SDC's Digital Presence: Where the Community Lives Online",
+          category: "Digital",
+          catClass: "cat-digital",
+          date: "August 2025",
+          readTime: "3 min read",
+          coverImage:
+            "assets/WhatsApp%20Image%202026-03-16%20at%2010.03.55%20AM.jpeg",
+          content: `
+                    <p>The <strong>SDC SNIST website</strong> serves as the central online hub for the Student Developers Community, highlighting its mission, initiatives, and events.</p>
+                    <h3>Our Platforms</h3>
+                    <ul>
+                        <li><strong>LinkedIn (SDC SNIST)</strong> — Official professional platform showcasing achievements, technical opportunities, and career-related updates</li>
+                        <li><strong>Instagram (sdc.snist)</strong> — Captures the vibrant spirit of SDC through event highlights and interactive content</li>
+                        <li><strong>GitHub (SDC)</strong> — Open-source collaboration space featuring projects, workshop resources, and real-world applications built by members</li>
+                    </ul>
+                    <blockquote>Together, these platforms strengthen SDC's visibility, promote community engagement, and support students in their technical and professional growth.</blockquote>
+                `,
+        },
+        "post-6": {
+          title: "Why Being an SDC Member Changes Everything",
+          category: "Article",
+          catClass: "cat-article",
+          date: "June 2025",
+          readTime: "5 min read",
+          coverImage:
+            "assets/WhatsApp%20Image%202026-03-16%20at%2010.03.54%20AM.jpeg",
+          content: `
+                    <p>Being a member of the Student Developers Community (SDC) offers students far more than just technical exposure.</p>
+                    <h3>Experiential Learning & Mentorship</h3>
+                    <p>Through flagship hackathons like <strong>HASH IT OUT</strong> and <strong>UX-Plosion</strong>, members work on real-world problem statements under the guidance of industry mentors, which has directly led to internships and placement opportunities for several students.</p>
+                    <h3>Professional Networking</h3>
+                    <p>By partnering with national-level events such as PyCon India, GDSC WOW, and Hack This Fall, and organizing events at Microsoft Hyderabad, Microsoft Bangalore, and Growth Hub, SDC provides members <strong>direct access to industry professionals, recruiters, and startup ecosystems</strong>.</p>
+                    <h3>Holistic Growth</h3>
+                    <p>Beyond technical skills, SDC nurtures:</p>
+                    <ul>
+                        <li>Teamwork and leadership</li>
+                        <li>Communication and presentation skills</li>
+                        <li>Open-source contribution</li>
+                        <li>Public showcase of student work via LinkedIn, GitHub, and more</li>
+                    </ul>
+                    <blockquote>Being part of SDC supports overall growth of a student by offering the skills, exposure, and confidence required to succeed in today's technology-driven world.</blockquote>
+                `,
+        },
+        "post-7": {
+          title: "Beyond Tech at Microsoft Hyderabad: A Recap",
+          category: "Event",
+          catClass: "cat-event",
+          date: "April 2025",
+          readTime: "4 min read",
+          coverImage:
+            "assets/WhatsApp%20Image%202026-03-16%20at%2010.03.55%20AM.jpeg",
+          content: `
+                    <p>One of SDC's most memorable moments was co-hosting the <strong>Beyond Tech</strong> and <strong>AI Workshop</strong> sessions at Microsoft Hyderabad, connecting students directly with industry luminaries and startup founders.</p>
+                    <h3>What Happened</h3>
+                    <p>The event brought together students, professionals, and entrepreneurs in an open forum to discuss the future of technology, career pathways, and the role of student communities in India's growing tech landscape.</p>
+                    <h3>Key Takeaways</h3>
+                    <ul>
+                        <li>Networking with recruiters and startup founders</li>
+                        <li>Live Q&amp;A sessions with industry experts</li>
+                        <li>Workshops on AI applications in real-world products</li>
+                        <li>Exclusive exposure to Microsoft's innovation ecosystem</li>
+                    </ul>
+                    <blockquote>Events like Beyond Tech remind us that the greatest breakthroughs happen at the intersection of learning and real-world experience.</blockquote>
+                `,
+        },
+      };
+
+      /* =========================================
+           MODAL LOGIC
+        ========================================= */
+      function openModal(postId) {
+        const post = posts[postId];
+        if (!post) return;
+
+        document.getElementById("modal-cover").className = "modal-cover";
+        document.getElementById("modal-cover").innerHTML =
+          `<img src="${post.coverImage}" alt="${post.title}" />
+                 <button class="modal-close" onclick="closeModal(null, true)" aria-label="Close">&#10005;</button>`;
+
+        document.getElementById("modal-meta").innerHTML =
+          `<span class="post-category ${post.catClass}">${post.category}</span>
+                 <span>${post.date}</span>
+                 <span>${post.readTime}</span>`;
+
+        document.getElementById("modal-title").textContent = post.title;
+        document.getElementById("modal-content").innerHTML = post.content;
+
+        // Reset scroll position
+        document.getElementById("modal-panel").scrollTop = 0;
+
+        const backdrop = document.getElementById("modal-backdrop");
+        backdrop.classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeModal(event, force) {
+        // Close only when clicking the backdrop (not the panel itself)
+        if (
+          !force &&
+          event &&
+          event.target !== document.getElementById("modal-backdrop")
+        )
+          return;
+        document.getElementById("modal-backdrop").classList.remove("open");
+        document.body.style.overflow = "";
+      }
+
+      const filterButtons = document.querySelectorAll(".filter-btn");
+      const articleCards = document.querySelectorAll(".article-card");
+
+      function filterArticles(category) {
+        articleCards.forEach((card) => {
+          const cardCategory = card.getAttribute("data-category");
+          const isVisible = category === "all" || cardCategory === category;
+          card.style.display = isVisible ? "flex" : "none";
+        });
+      }
+
+      filterButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          filterButtons.forEach((btn) => btn.classList.remove("active"));
+          button.classList.add("active");
+          filterArticles(button.getAttribute("data-filter") || "all");
+        });
+      });
+
+      // Close on Escape key
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeModal(null, true);
+      });
+    </script>
+  </body>
+</html>

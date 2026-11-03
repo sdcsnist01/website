@@ -1,0 +1,404 @@
+/* UXplosion 3.0 hackathon stage timer — big-screen display at
+   /events/uxplosion3.0/timer. Builds on uxplosion.css (bubble wordmark,
+   grid background, keyframes) and is imported only by the timer page. */
+
+.ux-stage {
+  --stage-glow: rgba(255, 47, 125, 0.28);
+  --stage-accent: #ff6fa8;
+  --clock-size: clamp(3.5rem, min(20vw, 44vh), 40rem);
+
+  position: relative;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  background: #0a0a0c;
+  color: #f5f3f4;
+  font-family: var(--font-uxp-body);
+  cursor: default;
+  user-select: none;
+}
+.ux-stage[data-pointer="idle"] {
+  cursor: none;
+}
+.ux-stage[data-phase="final-hour"] {
+  --stage-glow: rgba(255, 106, 69, 0.36);
+  --stage-accent: #ff8a45;
+}
+.ux-stage[data-phase="final-ten"] {
+  --stage-glow: rgba(255, 70, 90, 0.5);
+  --stage-accent: #ff5368;
+}
+
+/* Ambient glow behind the clock — intensifies with urgency. */
+.ux-stage-glow {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  width: min(120vw, 190vh);
+  aspect-ratio: 2 / 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--stage-glow), transparent 72%);
+  filter: blur(40px);
+  opacity: 0.55;
+  transition: background 1.2s ease, opacity 1.2s ease;
+  animation: ux-stage-breathe 9s ease-in-out infinite;
+}
+.ux-stage[data-phase="final-hour"] .ux-stage-glow {
+  opacity: 0.75;
+}
+.ux-stage[data-phase="final-ten"] .ux-stage-glow {
+  opacity: 0.9;
+  animation-duration: 4s;
+}
+.ux-stage[data-phase="up"] .ux-stage-glow {
+  opacity: 0.85;
+  --stage-glow: rgba(140, 92, 246, 0.35);
+}
+
+.ux-stage-header,
+.ux-stage-main,
+.ux-stage-footer {
+  position: relative;
+  z-index: 3;
+}
+
+/* Header: SDC logo left, UXplosion wordmark centred. */
+.ux-stage-header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  padding: clamp(14px, 3.2vh, 44px) clamp(16px, 4vw, 72px) 0;
+}
+.ux-stage-logo {
+  height: clamp(26px, 4.4vh, 60px);
+  width: auto;
+  opacity: 0.9;
+}
+.ux-stage-social {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  font-family: var(--font-uxp-heading);
+  font-size: clamp(0.9rem, min(1.5vw, 2.6vh), 2rem);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: #f4f0f2;
+  opacity: 0.9;
+  white-space: nowrap;
+}
+.ux-stage-social svg {
+  width: 1.7em;
+  height: 1.7em;
+  flex-shrink: 0;
+}
+@media (max-width: 600px) {
+  .ux-stage-social span {
+    display: none;
+  }
+}
+.ux-stage-wordmark {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.18em;
+  font-family: var(--font-uxp-bubble);
+  font-weight: 800;
+  font-size: clamp(1.8rem, min(5vw, 8vh), 6rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.ux-stage-wordmark .ux-bubble-three {
+  font-size: 0.5em;
+  transform: translateY(-0.2em);
+}
+
+.ux-stage-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 0 clamp(16px, 3vw, 64px);
+}
+
+.ux-stage-countdown,
+.ux-stage-up {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  animation: ux-stage-enter 900ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.ux-stage-label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6em 1.1em;
+  margin-bottom: clamp(4px, 1.6vh, 28px);
+  font-size: clamp(0.85rem, min(1.6vw, 2.8vh), 2.2rem);
+}
+.ux-stage-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  margin: 0;
+  font-size: 1em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.26em;
+  color: #ff6fa8;
+}
+.ux-stage-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  padding: 0.35em 0.95em;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--stage-accent) 40%, transparent);
+  background: color-mix(in srgb, var(--stage-accent) 12%, transparent);
+  font-size: 0.72em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #f4f0f2;
+  transition: border-color 1s ease, background 1s ease;
+}
+.ux-stage-pill-dot {
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50%;
+  background: var(--stage-accent);
+  box-shadow: 0 0 10px var(--stage-accent);
+  animation: ux-pulse 3.4s ease-in-out infinite;
+}
+.ux-stage[data-phase="final-ten"] .ux-stage-pill-dot {
+  animation-duration: 1.8s;
+}
+.ux-stage[data-phase="idle"] .ux-stage-pill-dot,
+.ux-stage[data-phase="paused"] .ux-stage-pill-dot {
+  background: #b8b2b7;
+  box-shadow: none;
+  animation: none;
+}
+
+/* The clock: fixed-width digit cells so nothing shifts as numbers change. */
+.ux-stage-clock {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  font-family: var(--font-uxp-bubble);
+  font-weight: 800;
+  font-size: var(--clock-size);
+  line-height: 1;
+  transition: transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 600ms ease;
+}
+.ux-stage[data-phase="final-ten"] .ux-stage-clock {
+  transform: scale(1.04);
+}
+.ux-stage[data-phase="idle"] .ux-stage-clock,
+.ux-stage[data-phase="paused"] .ux-stage-clock,
+.ux-stage[data-phase="loading"] .ux-stage-clock {
+  opacity: 0.72;
+}
+.ux-stage-group-wrap {
+  display: flex;
+  align-items: flex-start;
+}
+.ux-stage-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.ux-stage-digits {
+  display: flex;
+  padding-top: 0.06em;
+  background: linear-gradient(180deg, #ffd3a3 0%, #ff8a45 22%, #ff2f8d 58%, #ff2f9e 78%, #d23d9e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0.02em 0 rgba(160, 15, 80, 0.35)) drop-shadow(0 0 0.12em var(--stage-glow));
+  transition: filter 1.2s ease;
+}
+.ux-stage[data-phase="final-ten"] .ux-stage-digits {
+  filter: drop-shadow(0 0.02em 0 rgba(160, 15, 80, 0.35)) drop-shadow(0 0 0.2em var(--stage-glow));
+}
+.ux-stage-digit {
+  display: inline-block;
+  width: 0.6em;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.ux-stage-colon {
+  display: inline-block;
+  width: 0.34em;
+  padding-top: 0.02em;
+  text-align: center;
+  color: color-mix(in srgb, var(--stage-accent) 55%, transparent);
+  transition: color 1.2s ease;
+}
+.ux-stage-unit {
+  margin-top: 0.3em;
+  font-family: var(--font-uxp-heading);
+  font-size: clamp(0.7rem, 0.075em, 1.6rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.32em;
+  /* optical centring: letter-spacing adds trailing space */
+  padding-left: 0.32em;
+  color: #8f898f;
+}
+
+/* Time's up */
+.ux-stage-up .ux-stage-kicker {
+  font-size: clamp(0.85rem, min(1.6vw, 2.8vh), 2.2rem);
+  color: #8f898f;
+}
+.ux-stage-up-title {
+  margin: clamp(8px, 2vh, 28px) 0 0;
+  font-family: var(--font-uxp-bubble);
+  font-weight: 800;
+  font-size: clamp(3rem, min(10.5vw, 19vh), 20rem);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  animation: ux-stage-up-in 1.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.ux-stage-up-sub {
+  margin: clamp(12px, 3vh, 40px) 0 0;
+  font-family: var(--font-uxp-heading);
+  font-size: clamp(1rem, min(2vw, 3.4vh), 2.6rem);
+  font-weight: 500;
+  color: #b8b2b7;
+  animation: ux-stage-enter 900ms cubic-bezier(0.2, 0.7, 0.2, 1) 700ms both;
+}
+
+.ux-stage-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(10px, 2.2vh, 28px);
+  padding: 0 clamp(16px, 4vw, 72px) clamp(16px, 3.6vh, 48px);
+}
+.ux-stage-tagline {
+  margin: 0;
+  font-family: var(--font-uxp-heading);
+  font-size: clamp(0.8rem, min(1.4vw, 2.4vh), 1.9rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.34em;
+  padding-left: 0.34em;
+  color: #b8b2b7;
+}
+.ux-stage-tagline span {
+  color: #ff2f7d;
+  margin: 0 0.5em;
+}
+.ux-stage-progress {
+  width: min(100%, 1100px);
+  height: 3px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+.ux-stage-progress-fill {
+  height: 100%;
+  transform-origin: left center;
+  background: linear-gradient(90deg, #ff2f7d, #ff5368 60%, #ff8a45);
+  box-shadow: 0 0 12px rgba(255, 47, 125, 0.6);
+  transition: transform 1s linear;
+}
+
+/* Display chrome: only a fullscreen toggle, shown while the pointer moves. */
+.ux-stage-fs {
+  position: fixed;
+  right: clamp(12px, 2vw, 32px);
+  bottom: clamp(12px, 2vw, 32px);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid rgba(244, 240, 242, 0.18);
+  background: rgba(10, 10, 12, 0.6);
+  color: #f4f0f2;
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms ease, background 200ms ease;
+}
+.ux-stage[data-pointer="active"] .ux-stage-fs,
+.ux-stage-fs:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.ux-stage-fs:hover {
+  background: rgba(255, 47, 125, 0.16);
+}
+
+.ux-stage-conn {
+  position: fixed;
+  left: clamp(12px, 2vw, 32px);
+  bottom: clamp(12px, 2vw, 32px);
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #8f898f;
+}
+.ux-stage-conn-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ff8a45;
+  animation: ux-pulse 2s ease-in-out infinite;
+}
+
+@keyframes ux-stage-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+@keyframes ux-stage-up-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+    filter: blur(14px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+@keyframes ux-stage-breathe {
+  0%,
+  100% {
+    scale: 1;
+  }
+  50% {
+    scale: 1.06;
+  }
+}
+
+/* Short, wide screens (e.g. laptops with browser chrome): tighten spacing. */
+@media (max-height: 560px) {
+  .ux-stage-tagline {
+    display: none;
+  }
+}

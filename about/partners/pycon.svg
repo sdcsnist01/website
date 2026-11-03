@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="180" viewBox="0 0 360 180">
+  <rect width="360" height="180" rx="16" fill="#f8fafc"/>
+  <text x="34" y="102" font-size="54" font-family="Arial, sans-serif" font-weight="800" fill="#0f766e">PYCON</text>
+  <text x="204" y="102" font-size="54" font-family="Arial, sans-serif" font-weight="800" fill="#ca8a04">INDIA</text>
+  <text x="104" y="142" font-size="24" font-family="Arial, sans-serif" font-weight="600" fill="#334155">Hyderabad, 2023</text>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="180" viewBox="0 0 360 180">
+  <rect width="360" height="180" rx="16" fill="#eef6ff"/>
+  <rect x="24" y="24" width="40" height="40" fill="#f25022"/>
+  <rect x="70" y="24" width="40" height="40" fill="#7fba00"/>
+  <rect x="24" y="70" width="40" height="40" fill="#00a4ef"/>
+  <rect x="70" y="70" width="40" height="40" fill="#ffb900"/>
+  <text x="130" y="78" font-size="26" font-family="Arial, sans-serif" font-weight="700" fill="#0f172a">Microsoft</text>
+  <text x="130" y="110" font-size="24" font-family="Arial, sans-serif" font-weight="600" fill="#334155">Learn</text>
+</svg>

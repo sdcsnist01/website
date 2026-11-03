@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="180" viewBox="0 0 360 180">
+  <rect width="360" height="180" rx="16" fill="#ffffff"/>
+  <text x="30" y="72" font-size="24" font-family="Arial, sans-serif" font-weight="600" fill="#374151">Google Developer</text>
+  <text x="30" y="102" font-size="24" font-family="Arial, sans-serif" font-weight="600" fill="#374151">Student Clubs</text>
+  <text x="30" y="148" font-size="64" font-family="Arial, sans-serif" font-weight="800" fill="#4285f4">W</text>
+  <text x="94" y="148" font-size="64" font-family="Arial, sans-serif" font-weight="800" fill="#ea4335">O</text>
+  <text x="162" y="148" font-size="64" font-family="Arial, sans-serif" font-weight="800" fill="#fbbc05">W</text>
+</svg>

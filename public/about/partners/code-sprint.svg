@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="180" viewBox="0 0 360 180">
+  <rect width="360" height="180" rx="16" fill="#fff7ed"/>
+  <polygon points="28,28 150,90 28,152" fill="#7e22ce"/>
+  <text x="62" y="103" font-size="44" font-family="Arial, sans-serif" font-weight="700" fill="#ffffff">CS</text>
+  <text x="172" y="84" font-size="44" font-family="Arial, sans-serif" font-weight="800" fill="#0f172a">Code</text>
+  <text x="172" y="126" font-size="44" font-family="Arial, sans-serif" font-weight="800" fill="#0f172a">Sprint</text>
+</svg>

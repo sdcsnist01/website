@@ -1,0 +1,128 @@
+:root {
+  --brand-orange: #f97316;
+  --brand-fuchsia: #d946ef;
+}
+
+.interactive-bg {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.bg-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(70px);
+  opacity: 0.24;
+  transition: transform 220ms linear;
+}
+
+.bg-orb-a {
+  width: 320px;
+  height: 320px;
+  top: 6%;
+  left: -4%;
+  background: radial-gradient(circle, var(--brand-orange), transparent 65%);
+}
+
+.bg-orb-b {
+  width: 380px;
+  height: 380px;
+  right: -8%;
+  bottom: -8%;
+  background: radial-gradient(circle, var(--brand-fuchsia), transparent 65%);
+}
+
+.bg-grid {
+  position: absolute;
+  width: 60vw;
+  height: 45vh;
+  border-radius: 24px;
+  opacity: 0.35;
+  background-image: linear-gradient(rgba(15, 23, 42, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+  transition: transform 220ms linear;
+}
+
+.bg-grid-top {
+  top: -4%;
+  right: 8%;
+}
+
+.bg-grid-bottom {
+  bottom: -6%;
+  left: 10%;
+}
+
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.modal-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-panel {
+  background: #ffffff;
+  width: 100%;
+  max-width: 740px;
+  max-height: 90vh;
+  border-radius: 24px 24px 0 0;
+  overflow-y: auto;
+  transform: translateY(60px);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-backdrop.open .modal-panel {
+  transform: translateY(0);
+}
+
+@media (prefers-color-scheme: dark) {
+  .modal-panel {
+    background: #0f172a;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-on-scroll {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .bg-orb,
+  .bg-grid {
+    transition: none;
+  }
+
+  .modal-backdrop,
+  .modal-panel {
+    transition: none;
+  }
+}
