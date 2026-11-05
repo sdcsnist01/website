@@ -18,11 +18,8 @@ We organize:
 
 ## 📚 Project Documentation
 
-To help the team get started, we have provided the following resources in the `docs/` folder:
-
 - [**Style Guide**](docs/style_guide.md): Color palette, typography, and design consistency rules (including Aceternity UI recommendation).
-- [**Task List**](docs/task.md): A detailed checklist for initial setup and feature implementation.
-- [**Walkthrough**](docs/walkthrough.md): A summary of the current base stack and how to start development.
+- [**`.env.example`**](.env.example): The environment variables to set in `.env.local` (never commit real values).
 
 ## 🚀 Getting Started
 

@@ -48,6 +48,11 @@ scripts/data/members-*.json
 # One-off generator that embeds the raw 2025 member form rows.
 scripts/build-members-2025.mjs
 
+# Local design/audit working files (not used by the site)
+/SDC_*.md
+/design.pdf
+/docs/*.xlsx
+
 # Local MCP secrets
 .cursor/mcp.json
 

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
-// Community Pulse is temporarily hidden (static snapshot only).
-// Restore by renaming page.disabled.tsx → page.tsx and removing this file.
+// Community Pulse is hidden. The old static page (page.disabled.tsx + community-pulse.json)
+// was removed from this repo; recover it from the original SDC-SNIST project if needed.
 export default function CommunityPage() {
   notFound();
 }
