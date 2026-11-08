@@ -1,3 +1,4 @@
+import MembershipPaymentsDashboard from "@/components/admin/MembershipPaymentsDashboard";
 import MembershipSettingsPanel from "@/components/admin/MembershipSettingsPanel";
 import { requireAdminPage } from "@/lib/admin-auth";
 
@@ -10,12 +11,15 @@ export default async function AdminPaymentsPage() {
   await requireAdminPage("/admin/payments");
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="font-grotesk text-2xl font-bold text-on-surface">Payment management</h2>
-        <p className="mt-1 text-sm text-on-surface-variant">Membership fee and payment settings.</p>
+    <div className="space-y-12">
+      <div className="space-y-6">
+        <div>
+          <h2 className="font-grotesk text-2xl font-bold text-on-surface">Payment management</h2>
+          <p className="mt-1 text-sm text-on-surface-variant">Membership fee, payment settings and transactions.</p>
+        </div>
+        <MembershipSettingsPanel />
       </div>
-      <MembershipSettingsPanel />
+      <MembershipPaymentsDashboard />
     </div>
   );
 }
