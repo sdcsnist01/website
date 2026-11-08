@@ -1,5 +1,5 @@
-import MembershipPaymentsDashboard from "@/components/admin/MembershipPaymentsDashboard";
 import MembershipSettingsPanel from "@/components/admin/MembershipSettingsPanel";
+import PaymentsTabs from "@/components/admin/PaymentsTabs";
 import { requireAdminPage } from "@/lib/admin-auth";
 
 export const metadata = {
@@ -19,7 +19,7 @@ export default async function AdminPaymentsPage() {
         </div>
         <MembershipSettingsPanel />
       </div>
-      <MembershipPaymentsDashboard />
+      <PaymentsTabs />
     </div>
   );
 }

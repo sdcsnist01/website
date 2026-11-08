@@ -55,7 +55,8 @@ export type AdminPaymentStats = {
 
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
-function validDate(value: string | null): string | null {
+/** A YYYY-MM-DD date that parses as a real day, or null. */
+export function validDate(value: string | null): string | null {
   if (!value || !DATE_PATTERN.test(value)) return null;
   return Number.isNaN(Date.parse(`${value}T00:00:00+05:30`)) ? null : value;
 }
@@ -75,7 +76,7 @@ export function parseAdminPaymentFilters(params: URLSearchParams): AdminPaymentF
 }
 
 /** Start of the given IST day as an ISO timestamp, optionally shifted by whole days. */
-function istDayStart(date: string, addDays = 0): string {
+export function istDayStart(date: string, addDays = 0): string {
   const start = new Date(`${date}T00:00:00+05:30`);
   start.setUTCDate(start.getUTCDate() + addDays);
   return start.toISOString();
