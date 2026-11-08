@@ -168,7 +168,7 @@ export const EVENTS: Event[] = [
   },
   {
     id: "5",
-    title: "Hash-It-Out Season 2",
+    title: "Hash-It-Out Season 3",
     description: "State-level hackathon bringing together students from across Telangana to solve real-world problems. Focused on team building, networking, and technical innovation.",
     date: "TBD",
     time: "TBD",

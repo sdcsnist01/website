@@ -46,7 +46,6 @@ const AUTOPLAY_MS = 4000;
 
 export default function TeamSection() {
   const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
   const count = MEMBERS.length;
 
   const go = (step: number) => {
@@ -54,13 +53,13 @@ export default function TeamSection() {
     setActive((i) => (i + step + count) % count);
   };
 
-  // Advances every AUTOPLAY_MS. Pauses while hovered or focused, and restarts the timer after any manual move.
+  // Advances every AUTOPLAY_MS, and restarts the timer after any manual move.
   useEffect(() => {
-    if (count < 2 || paused) return;
+    if (count < 2) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const timer = window.setInterval(() => setActive((i) => (i + 1) % count), AUTOPLAY_MS);
     return () => window.clearInterval(timer);
-  }, [count, paused, active]);
+  }, [count, active]);
 
   // Pointer drag: a horizontal swipe of at least 40px moves one card, as in the reference.
   const drag = useRef<{ x: number; id: number } | null>(null);
@@ -86,10 +85,6 @@ export default function TeamSection() {
       id="board"
       aria-labelledby="team-heading"
       className="relative scroll-mt-16 overflow-hidden bg-[#f0eee8] py-20 text-[#171717] sm:py-28"
-      onPointerEnter={() => setPaused(true)}
-      onPointerLeave={() => setPaused(false)}
-      onFocus={() => setPaused(true)}
-      onBlur={() => setPaused(false)}
     >
       <FloatWords preset="board" />
       <div
