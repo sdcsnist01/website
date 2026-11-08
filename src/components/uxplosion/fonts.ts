@@ -1,22 +1,6 @@
-import { Space_Grotesk, Manrope, Baloo_2 } from "next/font/google";
-
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-uxp-heading",
-  weight: ["500", "600", "700"],
-  subsets: ["latin"],
-});
-
-const manrope = Manrope({
-  variable: "--font-uxp-body",
-  weight: ["400", "500", "600", "700"],
-  subsets: ["latin"],
-});
-
-const baloo2 = Baloo_2({
-  variable: "--font-uxp-bubble",
-  weight: ["700", "800"],
-  subsets: ["latin"],
-});
-
-/** CSS variable classes for the UXplosion 3.0 type system. */
-export const uxplosionFontVariables = `${spaceGrotesk.variable} ${manrope.variable} ${baloo2.variable}`;
+/**
+ * CSS class for the UXplosion 3.0 type system. It sets --font-uxp-heading (Space Grotesk),
+ * --font-uxp-body (Manrope) and --font-uxp-bubble (Baloo 2); see `.uxp-fonts` in globals.css.
+ * The font files themselves are loaded by the Google Fonts link in the root layout.
+ */
+export const uxplosionFontVariables = "uxp-fonts";
