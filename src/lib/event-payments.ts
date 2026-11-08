@@ -1,5 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getCashfreeOrder, getCashfreeOrderPayments, resolveCashfreeStatus, type PaymentStatus } from "@/lib/cashfree";
+import { sendEmail } from "@/lib/email";
+import { eventConfirmationEmail } from "@/lib/payment-emails";
 
 /** Our Cashfree order IDs for events: sdce_<event slug, up to 20 chars>_<12 hex chars>. */
 export const EVENT_ORDER_ID_PATTERN = /^sdce_[A-Za-z0-9-]{1,20}_[0-9a-f]{12}$/;
@@ -19,6 +21,8 @@ export function toRegistrationStatus(status: PaymentStatus): EventRegistrationSt
 export type EventRegistrationRow = {
   id: string;
   event_id: string;
+  name: string;
+  email: string;
   cashfree_order_id: string;
   amount_paise: number;
   status: EventRegistrationStatus;
@@ -30,7 +34,7 @@ export async function getEventRegistrationByOrderId(
 ): Promise<EventRegistrationRow | null> {
   const { data, error } = await admin
     .from("event_registrations")
-    .select("id, event_id, cashfree_order_id, amount_paise, status")
+    .select("id, event_id, name, email, cashfree_order_id, amount_paise, status")
     .eq("cashfree_order_id", orderId)
     .maybeSingle();
   if (error) throw new Error(`Registration lookup failed: ${error.message}`);
@@ -73,5 +77,30 @@ export async function syncCashfreeEventPayment(
   if (error) throw new Error(`apply_event_payment failed: ${error.message}`);
 
   const row = (Array.isArray(data) ? data[0] : data) as { final_status: EventRegistrationStatus; confirmed: boolean };
+
+  if (row.confirmed) {
+    // Sent once: `confirmed` is true only for the call that confirmed the registration.
+    // sendEmail never throws, so a mail problem can't affect the registration.
+    const { data: event } = await admin
+      .from("events")
+      .select("title, event_date, event_time, location")
+      .eq("id", registration.event_id)
+      .maybeSingle();
+    await sendEmail(
+      eventConfirmationEmail({
+        to: registration.email,
+        name: registration.name,
+        eventTitle: event?.title ?? "your SDC event",
+        date: event?.event_date ?? null,
+        time: event?.event_time ?? null,
+        location: event?.location ?? null,
+        amountPaise: registration.amount_paise,
+        orderId: registration.cashfree_order_id,
+        paymentId: resolved.paymentId,
+      }),
+      `event ${registration.cashfree_order_id}`,
+    );
+  }
+
   return { status: row.final_status, confirmed: row.confirmed };
 }

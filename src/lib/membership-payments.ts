@@ -5,6 +5,8 @@ import {
   resolveCashfreeStatus,
   type PaymentStatus,
 } from "@/lib/cashfree";
+import { sendEmail } from "@/lib/email";
+import { membershipConfirmationEmail } from "@/lib/payment-emails";
 
 /**
  * Our Cashfree order IDs: sdcm_<member ID>_<12 hex chars>. New member IDs are 6 digits,
@@ -24,6 +26,7 @@ export type MembershipPaymentRow = {
   member_id: string;
   membership_year: number;
   full_name: string;
+  email: string;
   gateway_order_id: string;
   payment_session_id: string | null;
   order_expires_at: string | null;
@@ -46,7 +49,7 @@ export async function getMembershipPaymentByOrderId(
   const { data, error } = await admin
     .from("membership_payments")
     .select(
-      "id, user_id, member_id, membership_year, full_name, gateway_order_id, payment_session_id, order_expires_at, amount_paise, status",
+      "id, user_id, member_id, membership_year, full_name, email, gateway_order_id, payment_session_id, order_expires_at, amount_paise, status",
     )
     .eq("gateway", "cashfree")
     .eq("gateway_order_id", orderId)
@@ -110,6 +113,23 @@ export async function syncCashfreeMembershipPayment(
     // First activation only: confirm the account's email and set the profile name.
     await admin.auth.admin.updateUserById(row.user_id, { email_confirm: true });
     await admin.from("profiles").update({ full_name: payment.full_name }).eq("id", row.user_id);
+  }
+
+  if (row.activated) {
+    // Sent once: `activated` is true only for the call that activated the membership.
+    // sendEmail never throws, so a mail problem can't affect the payment.
+    await sendEmail(
+      membershipConfirmationEmail({
+        to: payment.email,
+        name: payment.full_name,
+        memberId: payment.member_id,
+        membershipYear: payment.membership_year,
+        amountPaise: payment.amount_paise,
+        orderId: payment.gateway_order_id,
+        paymentId: resolved.paymentId,
+      }),
+      `membership ${payment.gateway_order_id}`,
+    );
   }
 
   return {
