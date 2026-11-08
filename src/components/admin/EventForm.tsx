@@ -198,7 +198,7 @@ export default function EventForm({ initial }: EventFormProps) {
           onChange={(e) => update("requiresPayment", e.target.checked)}
           className="h-4 w-4 rounded border-outline-variant/40"
         />
-        Require Razorpay payment to register
+        Require payment to register (Cashfree)
       </label>
 
       {form.requiresPayment ? (

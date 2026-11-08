@@ -107,7 +107,7 @@ export async function syncCashfreeMembershipPayment(
   };
 
   if (row.activated && row.user_id) {
-    // First activation only: same follow-up the Razorpay flow did.
+    // First activation only: confirm the account's email and set the profile name.
     await admin.auth.admin.updateUserById(row.user_id, { email_confirm: true });
     await admin.from("profiles").update({ full_name: payment.full_name }).eq("id", row.user_id);
   }

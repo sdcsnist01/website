@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createCashfreeOrder, getCashfreeMode } from "@/lib/cashfree";
 import { getMembershipSettings } from "@/lib/membership-settings";
 import { buildMembershipOrderId } from "@/lib/membership-payments";
+import { getCashfreeNotifyUrl, getSiteUrl, normalizePhone } from "@/lib/payment-request";
 import { generateUniqueMemberId, isMemberJoiningYear } from "@/lib/member-id";
 
 // Reuse an open order only if it stays payable for at least this long.
@@ -11,22 +12,6 @@ const ORDER_REUSE_MIN_REMAINING_MS = 5 * 60 * 1000;
 
 function generateAccountPassword() {
   return randomBytes(24).toString("base64url");
-}
-
-/** Indian mobile number as 10 digits, accepting +91 / 0 prefixes and spaces. */
-function normalizePhone(value: string): string | null {
-  let digits = value.replace(/\D/g, "");
-  if (digits.length === 12 && digits.startsWith("91")) digits = digits.slice(2);
-  if (digits.length === 11 && digits.startsWith("0")) digits = digits.slice(1);
-  return /^[6-9]\d{9}$/.test(digits) ? digits : null;
-}
-
-/** Public base URL for Cashfree redirects and webhooks. SITE_URL overrides the request host. */
-function getSiteUrl(request: Request): string {
-  if (process.env.SITE_URL) return process.env.SITE_URL.replace(/\/$/, "");
-  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
-  const proto = request.headers.get("x-forwarded-proto") ?? new URL(request.url).protocol.replace(":", "");
-  return host ? `${proto}://${host}` : new URL(request.url).origin;
 }
 
 export async function POST(request: Request) {
@@ -133,7 +118,7 @@ export async function POST(request: Request) {
       memberId = await generateUniqueMemberId(admin, batchYear);
     }
 
-    // Razorpay columns are left out on purpose so historical Razorpay IDs are kept.
+    // Legacy Razorpay columns are left out on purpose so historical Razorpay IDs are kept.
     const { error: memberError } = await admin.from("sdc_members").upsert(
       {
         id: userId,
@@ -209,8 +194,7 @@ export async function POST(request: Request) {
         amountPaise: settings.feePaise,
         customer: { id: `sdc_${userId.replace(/-/g, "")}`, name, email: mail, phone: mobile },
         returnUrl: `${siteUrl}/join/payment-status?order_id={order_id}`,
-        // Cashfree only delivers webhooks to https URLs.
-        notifyUrl: siteUrl.startsWith("https://") ? `${siteUrl}/api/membership/cashfree-webhook` : null,
+        notifyUrl: getCashfreeNotifyUrl(siteUrl),
         note: `SDC SNIST membership ${batchYear} (${memberId})`,
       });
     } catch (err) {

@@ -3,14 +3,14 @@
 import { useState } from "react";
 import type { Event } from "@/types/events";
 
-function loadRazorpayScript() {
+function loadCashfreeScript() {
   return new Promise<boolean>((resolve) => {
-    if (window.Razorpay) {
+    if (window.Cashfree) {
       resolve(true);
       return;
     }
     const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.src = "https://sdk.cashfree.com/js/v3/cashfree.js";
     script.onload = () => resolve(true);
     script.onerror = () => resolve(false);
     document.body.appendChild(script);
@@ -51,68 +51,43 @@ export default function EventRegisterButton({
     setError(null);
     setMessage(null);
 
-    const scriptLoaded = await loadRazorpayScript();
-    if (!scriptLoaded || !window.Razorpay) {
-      setError("Could not load payment gateway. Please try again.");
+    try {
+      const scriptLoaded = await loadCashfreeScript();
+      if (!scriptLoaded || !window.Cashfree) {
+        setError("Could not load payment gateway. Please try again.");
+        return;
+      }
+
+      const orderRes = await fetch("/api/events/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ eventSlug: event.id, name, email, phone }),
+      });
+
+      const orderData = (await orderRes.json().catch(() => ({}))) as {
+        error?: string;
+        paymentSessionId?: string;
+        mode?: "sandbox" | "production";
+      };
+      if (!orderRes.ok || !orderData.paymentSessionId || !orderData.mode) {
+        setError(orderData.error ?? "Failed to start payment.");
+        return;
+      }
+
+      // Redirects this tab to Cashfree; Cashfree sends the registrant back to
+      // /events/payment-status, where the server confirms the result.
+      const result = await window.Cashfree({ mode: orderData.mode }).checkout({
+        paymentSessionId: orderData.paymentSessionId,
+        redirectTarget: "_self",
+      });
+      if (result?.error) {
+        setError(result.error.message ?? "Could not open checkout. Please try again.");
+      }
+    } catch {
+      setError("Something went wrong starting the payment. Please try again.");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    const orderRes = await fetch("/api/razorpay/create-order", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ eventSlug: event.id, name, email, phone }),
-    });
-
-    const orderData = await orderRes.json();
-    if (!orderRes.ok) {
-      setError(orderData.error ?? "Failed to start payment.");
-      setLoading(false);
-      return;
-    }
-
-    const rzp = new window.Razorpay({
-      key: orderData.keyId,
-      amount: orderData.amount,
-      currency: orderData.currency,
-      name: "SDC SNIST",
-      description: orderData.eventTitle,
-      order_id: orderData.orderId,
-      prefill: { name, email, contact: phone },
-      theme: { color: "#d9272e" },
-      handler: async (response) => {
-        const verifyRes = await fetch("/api/razorpay/verify", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
-            registrationId: orderData.registrationId,
-          }),
-        });
-
-        const verifyData = await verifyRes.json();
-        if (verifyRes.ok) {
-          setMessage(verifyData.message ?? "Registration confirmed!");
-          setOpen(false);
-        } else {
-          setError(verifyData.error ?? "Payment received but verification failed. Contact support.");
-        }
-        setLoading(false);
-      },
-      modal: {
-        ondismiss: () => setLoading(false),
-      },
-    });
-
-    rzp.on("payment.failed", (res) => {
-      setError(res.error.description);
-      setLoading(false);
-    });
-
-    rzp.open();
-    setLoading(false);
   }
 
   if (!isPaid && hasExternalLink) {
@@ -183,16 +158,25 @@ export default function EventRegisterButton({
                 </div>
                 <div>
                   <label htmlFor="reg-phone" className="mb-1.5 block text-sm font-semibold text-on-surface">
-                    Phone <span className="font-normal text-on-surface-variant">(optional)</span>
+                    Phone
                   </label>
-                  <input id="reg-phone" value={phone} onChange={(e) => setPhone(e.target.value)} className={FIELD_CLASS} />
+                  <input
+                    id="reg-phone"
+                    required
+                    type="tel"
+                    inputMode="tel"
+                    placeholder="10-digit mobile number"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className={FIELD_CLASS}
+                  />
                 </div>
                 <button
                   type="submit"
                   disabled={loading}
                   className="pressable flex min-h-12 w-full items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-white transition-colors hover:bg-primary-dim disabled:opacity-60"
                 >
-                  {loading ? "Processing…" : `Pay ₹${feeInr} with Razorpay`}
+                  {loading ? "Opening checkout…" : `Pay ₹${feeInr}`}
                 </button>
               </form>
             )}
