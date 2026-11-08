@@ -1,5 +1,5 @@
 -- Membership fee configuration and fee change history.
--- The amount is stored in paise (₹499 = 49900). Reads and writes go through the
+-- The amount is stored in paise (₹199 = 19900). Reads and writes go through the
 -- service role API only; no anon or authenticated policies are created.
 
 create table if not exists public.membership_settings (
@@ -32,9 +32,9 @@ revoke all on table public.membership_fee_history from anon, authenticated;
 grant select, insert, update, delete on table public.membership_settings to service_role;
 grant select, insert, update, delete on table public.membership_fee_history to service_role;
 
--- Initial membership fee: ₹499.
+-- Initial membership fee: ₹199.
 insert into public.membership_settings (id, fee_paise, payments_enabled)
-values ('default', 49900, true)
+values ('default', 19900, true)
 on conflict (id) do nothing;
 
 -- Updates the settings row and writes a history row in one transaction.

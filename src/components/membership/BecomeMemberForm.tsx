@@ -3,14 +3,14 @@
 import { useState } from "react";
 import { MEMBER_JOINING_YEARS, type MemberJoiningYear } from "@/lib/member-id";
 
-function loadRazorpayScript() {
+function loadCashfreeScript() {
   return new Promise<boolean>((resolve) => {
-    if (window.Razorpay) {
+    if (window.Cashfree) {
       resolve(true);
       return;
     }
     const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.src = "https://sdk.cashfree.com/js/v3/cashfree.js";
     script.onload = () => resolve(true);
     script.onerror = () => resolve(false);
     document.body.appendChild(script);
@@ -36,7 +36,6 @@ export default function BecomeMemberForm({ feeInr, paymentsEnabled }: BecomeMemb
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<{ memberId: string; membershipYear?: number; message: string } | null>(null);
 
   function update(key: keyof typeof form, value: string) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -53,9 +52,9 @@ export default function BecomeMemberForm({ feeInr, paymentsEnabled }: BecomeMemb
         return;
       }
 
-      const scriptLoaded = await loadRazorpayScript();
-      if (!scriptLoaded || !window.Razorpay) {
-        setError("Could not load Razorpay. Check your connection and try again.");
+      const scriptLoaded = await loadCashfreeScript();
+      if (!scriptLoaded || !window.Cashfree) {
+        setError("Could not load Cashfree checkout. Check your connection and try again.");
         return;
       }
 
@@ -73,128 +72,37 @@ export default function BecomeMemberForm({ feeInr, paymentsEnabled }: BecomeMemb
 
       let orderData: {
         error?: string;
-        keyId?: string;
-        amount?: number;
-        currency?: string;
         orderId?: string;
-        userId?: string;
+        paymentSessionId?: string;
+        mode?: "sandbox" | "production";
       };
       try {
         orderData = await orderRes.json();
       } catch {
-        setError("Could not start Razorpay payment. Please try again.");
+        setError("Could not start the payment. Please try again.");
         return;
       }
 
-      if (!orderRes.ok || !orderData.orderId || !orderData.keyId || !orderData.userId) {
-        setError(orderData.error ?? "Could not start Razorpay payment.");
+      if (!orderRes.ok || !orderData.paymentSessionId || !orderData.mode) {
+        setError(orderData.error ?? "Could not start the payment.");
         return;
       }
 
-      const userId = orderData.userId;
-
-      const RazorpayCtor = window.Razorpay;
-      if (!RazorpayCtor) {
-        setError("Could not load Razorpay. Check your connection and try again.");
-        return;
-      }
-
-      const amount = Number(orderData.amount);
-      if (!Number.isFinite(amount)) {
-        setError("Invalid Razorpay order amount.");
-        return;
-      }
-
-
-      await new Promise<void>((resolve) => {
-        const rzp = new RazorpayCtor({
-          key: orderData.keyId!,
-          amount,
-          currency: orderData.currency ?? "INR",
-          name: "SDC SNIST",
-          description: `Annual Membership · ₹${feeInr}`,
-          order_id: orderData.orderId!,
-          prefill: {
-            name: form.fullName,
-            email: form.email,
-            contact: form.phone,
-          },
-          theme: { color: "#d9272e" },
-          handler: async (response) => {
-            try {
-              const verifyRes = await fetch("/api/membership/verify", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  razorpay_order_id: response.razorpay_order_id,
-                  razorpay_payment_id: response.razorpay_payment_id,
-                  razorpay_signature: response.razorpay_signature,
-                  userId,
-                }),
-              });
-
-              const verifyData = await verifyRes.json();
-              if (verifyRes.ok) {
-                setSuccess({
-                  memberId: verifyData.memberId,
-                  membershipYear: verifyData.membershipYear,
-                  message: verifyData.message,
-                });
-              } else {
-                setError(
-                  verifyData.error ??
-                    "Payment received but activation failed. Contact support with your Razorpay payment ID.",
-                );
-              }
-            } catch {
-              setError("Payment received but verification failed. Contact support with your Razorpay payment ID.");
-            } finally {
-              resolve();
-            }
-          },
-          modal: {
-            ondismiss: () => {
-              resolve();
-            },
-          },
-        });
-
-        rzp.on("payment.failed", (res) => {
-          setError(res.error?.description ?? "Razorpay payment failed. Please try again.");
-          resolve();
-        });
-
-        rzp.open();
+      // Redirects this tab to Cashfree; Cashfree sends the student back to
+      // /join/payment-status, where the server confirms the result.
+      const cashfree = window.Cashfree({ mode: orderData.mode });
+      const result = await cashfree.checkout({
+        paymentSessionId: orderData.paymentSessionId,
+        redirectTarget: "_self",
       });
+      if (result?.error) {
+        setError(result.error.message ?? "Could not open Cashfree checkout. Please try again.");
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong starting Razorpay.");
+      setError(err instanceof Error ? err.message : "Something went wrong starting the payment.");
     } finally {
       setLoading(false);
     }
-  }
-
-  if (success) {
-    return (
-      <div className="glass-card rounded-xl border border-primary/30 p-8 text-center md:p-12">
-        <p className="font-mono-ui text-xs tracking-[2px] text-primary">
-          {success.membershipYear ? `${success.membershipYear} COHORT · ` : ""}MEMBERSHIP ACTIVE
-        </p>
-        <h2 className="font-grotesk mt-4 text-3xl font-bold text-on-surface">Welcome to SDC SNIST</h2>
-        <p className="mt-4 text-on-surface-variant">{success.message}</p>
-        <div className="mx-auto mt-8 max-w-sm rounded-2xl border border-outline-variant/30 bg-surface-container-low p-6">
-          {success.membershipYear ? (
-            <p className="font-mono-ui mb-4 text-center text-xs uppercase tracking-[1.5px] text-primary">
-              Class of {success.membershipYear}
-            </p>
-          ) : null}
-          <p className="font-mono-ui text-xs uppercase tracking-[1.5px] text-on-surface-variant">Your member ID</p>
-          <p className="font-grotesk mt-2 break-all text-xl font-bold tracking-wider text-primary sm:text-2xl sm:tracking-widest md:text-3xl">{success.memberId}</p>
-        </div>
-        <p className="mt-6 text-sm text-on-surface-variant">
-          Save this ID. Keep the email you registered with for membership verification.
-        </p>
-      </div>
-    );
   }
 
   return (
@@ -202,7 +110,7 @@ export default function BecomeMemberForm({ feeInr, paymentsEnabled }: BecomeMemb
       <div className="mb-2">
         <h2 className="font-grotesk text-2xl font-bold text-on-surface">Member details</h2>
         <p className="mt-1 text-sm text-on-surface-variant">
-          One-time membership fee: <span className="font-bold text-primary">₹{feeInr}</span> via Razorpay
+          One-time membership fee: <span className="font-bold text-primary">₹{feeInr}</span> via Cashfree
         </p>
       </div>
 
@@ -258,11 +166,11 @@ export default function BecomeMemberForm({ feeInr, paymentsEnabled }: BecomeMemb
         disabled={loading || !paymentsEnabled}
         className="pressable font-mono-ui flex min-h-13 w-full cursor-pointer items-center justify-center rounded-full bg-primary text-sm uppercase tracking-[1.5px] text-white transition-colors hover:bg-primary-dim disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {loading ? "Opening Razorpay…" : `Pay ₹${feeInr} with Razorpay`}
+        {loading ? "Opening Cashfree…" : `Pay ₹${feeInr}`}
       </button>
 
       <p className="text-center text-xs text-on-surface-variant">
-        Secure checkout via Razorpay. Creates your SDC membership and a unique 6-digit member ID (e.g. 233101 for
+        Secure checkout via Cashfree (UPI, cards, net banking). Creates your SDC membership and a unique 6-digit member ID (e.g. 233101 for
         2023 batch) after successful payment.
       </p>
     </form>
